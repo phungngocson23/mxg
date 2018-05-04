@@ -3,7 +3,6 @@ const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -31,21 +30,30 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res, next) => {
-    console.log(req.body);
     const product = new Product({ name: req.body.name, brand: req.body.brand });
     product
         .save()
         .then(data => {
-            res.status(200).json(data)
+            res.status(201).json(data)
         })
-        .catch(next);
+        .catch(err => {
+            console.log(err);
+        });
 });
 
-app.use((err, req, res, next) => {
-    const status = err.status || 500;
-    res.status(status).send();
-    console.log(err.message);
-})
+// app.use((req, res, next) => {
+//     const error = new Error("Not found");
+//     error.status = 404;
+//     next(error);
+// });
 
+// app.use((err, req, res, next) => {
+//     const status = err.status || 500;
+//     console.log(status);
+//     res.status(status).json({
+//         code: status,
+//         message: err.message
+//     });
+// })
 
 module.exports = app;
